@@ -24,6 +24,32 @@ data "aws_ami" "amazon_linux_2023" {
   }
 }
 
+# 🔟 إنشاء مستودع تخزين S3 (S3 Bucket) للملفات الثابتة
+resource "aws_s3_bucket" "project_bucket" {
+  bucket_prefix = "amany-project-storage-bucket-" # بيضمن إن الاسم يكون فريد ومقبول في AWS
+  force_destroy = true                             # بيسمح بحذفه بسهولة مع الـ destroy لو احتجتِ بعدين
+
+  tags = {
+    Name = "Project-Static-Storage"
+  }
+}
+
+
+resource "aws_dynamodb_table" "project_db" {
+  name         = "Project_App_Data"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "UserId"          
+
+  attribute {
+    name = "UserId"
+    type = "S" 
+  }
+
+  tags = {
+    Name = "Project-Database-Table"
+  }
+}
+
 
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
